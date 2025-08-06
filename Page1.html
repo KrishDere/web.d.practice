@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disease Medicine Finder</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    /* Floating medicine icons */
+    .icon {
+        position: absolute;
+        width: 50px;
+        animation: float 15s linear infinite;
+        opacity: 0.3;
+    }
+    @keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); }
+        100% { transform: translateY(-10vh) rotate(360deg); }
+    }
+
+    header {
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        position: relative;
+        z-index: 2;
+    }
+
+    header h1 {
+        font-size: 2.2em;
+        margin: 0;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Dropdown Styling */
+    select {
+        padding: 12px 15px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        outline: none;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    select:hover {
+        background: #f1f1f1;
+    }
+
+    select:focus {
+        background: #eafaf1;
+        border: 2px solid #00b894;
+        box-shadow: 0px 0px 8px rgba(0, 184, 148, 0.8);
+    }
+
+    /* Button Styling */
+    button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+        background: linear-gradient(45deg, #00b894, #019874);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+        background: linear-gradient(45deg, #019874, #00b894);
+        transform: translateY(-3px);
+        box-shadow: 0px 6px 20px rgba(0,0,0,0.25);
+    }
+
+    button:active {
+        transform: translateY(0px);
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Result Box */
+    .result-box {
+        background: rgba(0, 0, 0, 0.75);
+        padding: 20px;
+        width: 80%;
+        border-radius: 10px;
+        display: none;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .result-box h2 {
+        margin-top: 0;
+        color: #ffeaa7;
+    }
+
+    .result-box ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .result-box ul li {
+        margin: 5px 0;
+    }
+
+    /* Get Well Soon message */
+    .get-well {
+        margin-top: 15px;
+        font-size: 1.4em;
+        font-weight: bold;
+        color: #ffcccc;
+        animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 5px #ff5e5e, 0 0 10px #ff5e5e; }
+        to { text-shadow: 0 0 15px #ff9999, 0 0 25px #ff9999; }
+    }
+</style>
+</head>
+<body>
+
+<!-- Floating medicine icons -->
+<img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" class="icon" style="left:10%; animation-delay: 0s;">
+<img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" class="icon" style="left:40%; animation-delay: 4s;">
+<img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" class="icon" style="left:70%; animation-delay: 8s;">
+<img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" class="icon" style="left:90%; animation-delay: 2s;">
+
+<header>
+    <h1>💊 Disease Medicine & Precaution Finder</h1>
+    <p>Select a disease and see medicines & precautions instantly</p>
+</header>
+
+<main>
+    <select id="disease">
+        <option value="">-- Select Disease --</option>
+        <option value="cough">Cough</option>
+        <option value="typhoid">Typhoid</option>
+        <option value="dengue">Dengue</option>
+        <option value="allergy">Allergy</option>
+    </select>
+    <button onclick="showInfo()">Get Info</button>
+
+    <div class="result-box" id="result">
+        <h2 id="diseaseName"></h2>
+        <h3>Medicines:</h3>
+        <ul id="medicines"></ul>
+        <h3>Precautions:</h3>
+        <ul id="precautions"></ul>
+        <div class="get-well">💖 Get Well Soon! 💖</div>
+    </div>
+</main>
+
+<script>
+function showInfo() {
+    let disease = document.getElementById("disease").value;
+    let resultBox = document.getElementById("result");
+    let diseaseName = document.getElementById("diseaseName");
+    let medicinesList = document.getElementById("medicines");
+    let precautionsList = document.getElementById("precautions");
+
+    medicinesList.innerHTML = "";
+    precautionsList.innerHTML = "";
+
+    let data = {
+        cough: {
+            name: "Cough",
+            medicines: [
+                "Cough syrup (Dextromethorphan) - Helps suppress dry cough",
+                "Honey with warm water - Soothes throat and reduces irritation",
+                "Lozenges - Provides relief for sore throat"
+            ],
+            precautions: [
+                "Drink warm fluids",
+                "Avoid cold drinks",
+                "Rest your voice"
+            ]
+        },
+        typhoid: {
+            name: "Typhoid",
+            medicines: [
+                "Antibiotics (Ciprofloxacin, Azithromycin) - Kills Salmonella bacteria",
+                "ORS solution - Prevents dehydration",
+                "Paracetamol - Reduces fever and headache"
+            ],
+            precautions: [
+                "Drink boiled water",
+                "Avoid street food",
+                "Complete full antibiotic course"
+            ]
+        },
+        dengue: {
+            name: "Dengue",
+            medicines: [
+                "Paracetamol - Controls fever and body pain",
+                "Plenty of fluids - Maintains hydration",
+                "Avoid NSAIDs like aspirin - Prevents bleeding risk"
+            ],
+            precautions: [
+                "Use mosquito nets",
+                "Avoid mosquito breeding areas",
+                "Rest as much as possible"
+            ]
+        },
+        allergy: {
+            name: "Allergy",
+            medicines: [
+                "Antihistamines (Cetirizine, Loratadine) - Reduces sneezing and itching",
+                "Nasal sprays - Relieves nasal congestion",
+                "Eye drops - Soothes red or itchy eyes"
+            ],
+            precautions: [
+                "Avoid allergens",
+                "Keep surroundings clean",
+                "Wear masks in dusty areas"
+            ]
+        }
+    };
+
+    if (data[disease]) {
+        diseaseName.textContent = data[disease].name;
+
+        data[disease].medicines.forEach(med => {
+            let li = document.createElement("li");
+            li.textContent = med;
+            medicinesList.appendChild(li);
+        });
+
+        data[disease].precautions.forEach(pre => {
+            let li = document.createElement("li");
+            li.textContent = pre;
+            precautionsList.appendChild(li);
+        });
+
+        resultBox.style.display = "block";
+    } else {
+        alert("Please select a disease.");
+        resultBox.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>
